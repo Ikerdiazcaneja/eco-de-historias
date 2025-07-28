@@ -529,13 +529,13 @@
                 return;
             }
             
-            // Crear FormData con nombres específicos que espera el Apps Script
+            // Crear FormData con nombres que espera el Apps Script actual
             const formData = new FormData();
-            formData.append('name', nombre);  // Cambiar 'nombre' por 'name'
-            formData.append('email', correo); // Cambiar 'correo' por 'email'
-            formData.append('category', categoria); // Cambiar 'categoria' por 'category'
-            formData.append('story', historia); // Cambiar 'historia' por 'story'
-            formData.append('terms', terminos ? 'true' : 'false'); // Cambiar 'terminos' por 'terms'
+            formData.append('nombre', nombre);    // Apps Script espera 'nombre'
+            formData.append('correo', correo);    // Apps Script espera 'correo'
+            formData.append('categoria', categoria); // Apps Script espera 'categoria'
+            formData.append('historia', historia);   // Apps Script espera 'historia'
+            formData.append('terminos', terminos ? 'true' : 'false'); // Apps Script espera 'terminos'
             
             // URL del Google Apps Script
             const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaHtQC7wP1yyTSBQlnwymnrwF1RLHs5af467DdIcrtUIu2ScQsnLzQu4jxDyn7dbV2/exec';
