@@ -514,8 +514,28 @@
             submitBtn.textContent = '🌊 Enviando tu eco...';
             messageDiv.innerHTML = '';
             
-            // Crear FormData
-            const formData = new FormData(this);
+            // Obtener los valores del formulario
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const categoria = document.getElementById('categoria').value.trim();
+            const historia = document.getElementById('historia').value.trim();
+            const terminos = document.getElementById('terminos').checked;
+            
+            // Validación básica
+            if (!nombre || !correo || !categoria || !historia || !terminos) {
+                messageDiv.innerHTML = '<div class="message error">❌ Todos los campos son obligatorios</div>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🌊 Enviar mi Eco';
+                return;
+            }
+            
+            // Crear FormData con nombres específicos que espera el Apps Script
+            const formData = new FormData();
+            formData.append('name', nombre);  // Cambiar 'nombre' por 'name'
+            formData.append('email', correo); // Cambiar 'correo' por 'email'
+            formData.append('category', categoria); // Cambiar 'categoria' por 'category'
+            formData.append('story', historia); // Cambiar 'historia' por 'story'
+            formData.append('terms', terminos ? 'true' : 'false'); // Cambiar 'terminos' por 'terms'
             
             // URL del Google Apps Script
             const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaHtQC7wP1yyTSBQlnwymnrwF1RLHs5af467DdIcrtUIu2ScQsnLzQu4jxDyn7dbV2/exec';
