@@ -552,6 +552,89 @@
                 text-align: left;
             }
         }
+
+        /* Estilos para el buscador */
+        .search-container {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3.5rem;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 25px;
+            background: rgba(25, 25, 50, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            border-color: rgba(138, 43, 226, 0.6);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(138, 43, 226, 0.7);
+            font-size: 1.2rem;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.3rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .clear-search:hover {
+            color: #fff;
+            background: rgba(138, 43, 226, 0.3);
+        }
+
+        .search-results {
+            margin-top: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                margin: 1.5rem 0;
+            }
+
+            .search-input {
+                padding: 0.8rem 1.2rem 0.8rem 3rem;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -571,6 +654,22 @@
         </div>
 
         <a href="index.html" class="back-button">← Regresar al Eco Principal</a>
+
+        <!-- Buscador de historias -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Buscar eco por título..."
+                    autocomplete="off"
+                >
+                <button class="clear-search" id="clearSearch" title="Limpiar búsqueda">✕</button>
+            </div>
+        </div>
+        <div class="search-results" id="searchResults"></div>
 
         <div class="stats" id="stats">
             <div class="loading">📊 Cargando resonancias...</div>
@@ -594,7 +693,13 @@
     </div>
 
     <script>
+        // Variables globales
+        let historiasFiltradas = [];
+        let busquedaActiva = false;
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Configurar buscador
+            configurarBuscador();
             // Event listeners para el modal ya están al final
         });
 
@@ -653,14 +758,10 @@
 
         function mostrarStats(total, source) {
             const statsDiv = document.getElementById('stats');
-            const sourceText = source === 'google-drive' ? '☁️ Google Drive' : 
-                              source === 'local' ? '💾 Local' : 
-                              source === 'local-empty' ? '💾 Local (vacío)' : '☁️ Google Drive';
             
             statsDiv.innerHTML = `
                 <h3>📊 Resonancias Activas</h3>
                 <p><strong>${total}</strong> eco${total !== 1 ? 's' : ''} resonando eternamente</p>
-                <p><small>Fuente: ${sourceText}</small></p>
             `;
         }
 
@@ -731,7 +832,9 @@
 
         // Funciones del modal
         function abrirModal(index) {
-            const historia = historiasGlobales[index];
+            // Usar el array correcto dependiendo de si hay búsqueda activa
+            const historias = busquedaActiva ? historiasFiltradas : historiasGlobales;
+            const historia = historias[index];
             if (!historia) return;
 
             // Emoji para la categoría
@@ -745,7 +848,7 @@
 
             // Llenar el modal con los datos
             document.getElementById('modalTitle').textContent = 
-                `${emoji} Eco #${historiasGlobales.length - index}: ${historia.titulo || 'Sin título'}`;
+                `${emoji} Eco #${historias.length - index}: ${historia.titulo || 'Sin título'}`;
             
             document.getElementById('modalMeta').innerHTML = `
                 <div class="modal-meta-item">📚 ${historia.categoria || 'Sin categoría'}</div>
@@ -784,6 +887,89 @@
 
             cargarHistorias();
         });
+
+        // ===== FUNCIONES DEL BUSCADOR =====
+        function configurarBuscador() {
+            const searchInput = document.getElementById('searchInput');
+            const clearButton = document.getElementById('clearSearch');
+            const searchResults = document.getElementById('searchResults');
+
+            // Event listener para búsqueda en tiempo real
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                if (query.length > 0) {
+                    clearButton.style.display = 'block';
+                    realizarBusqueda(query);
+                } else {
+                    clearButton.style.display = 'none';
+                    limpiarBusqueda();
+                }
+            });
+
+            // Event listener para limpiar búsqueda
+            clearButton.addEventListener('click', function() {
+                searchInput.value = '';
+                clearButton.style.display = 'none';
+                limpiarBusqueda();
+                searchInput.focus();
+            });
+
+            // Event listener para Enter
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const query = this.value.trim();
+                    if (query.length > 0) {
+                        realizarBusqueda(query);
+                    }
+                }
+            });
+        }
+
+        function realizarBusqueda(query) {
+            if (!historiasGlobales || historiasGlobales.length === 0) {
+                mostrarResultadosBusqueda([], query);
+                return;
+            }
+
+            const queryLower = query.toLowerCase();
+            
+            // Buscar en títulos
+            historiasFiltradas = historiasGlobales.filter(historia => {
+                const titulo = (historia.titulo || 'Sin título').toLowerCase();
+                return titulo.includes(queryLower);
+            });
+
+            busquedaActiva = true;
+            mostrarResultadosBusqueda(historiasFiltradas, query);
+            displayHistorias(historiasFiltradas);
+        }
+
+        function mostrarResultadosBusqueda(resultados, query) {
+            const searchResults = document.getElementById('searchResults');
+            const total = resultados.length;
+            
+            if (total === 0) {
+                searchResults.innerHTML = `🔍 No se encontraron ecos con título "${query}"`;
+                searchResults.style.color = 'rgba(255, 255, 255, 0.6)';
+            } else {
+                searchResults.innerHTML = `🔍 ${total} eco${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''} con "${query}"`;
+                searchResults.style.color = 'rgba(138, 43, 226, 0.8)';
+            }
+        }
+
+        function limpiarBusqueda() {
+            busquedaActiva = false;
+            historiasFiltradas = [];
+            document.getElementById('searchResults').innerHTML = '';
+            
+            // Mostrar todas las historias nuevamente
+            if (historiasGlobales && historiasGlobales.length > 0) {
+                displayHistorias(historiasGlobales);
+            }
+        }
+
     </script>
 </body>
 </html>
