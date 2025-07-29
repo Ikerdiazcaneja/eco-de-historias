@@ -190,6 +190,7 @@
             border: 1px solid rgba(138, 43, 226, 0.2);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .historia-card::before {
@@ -345,6 +346,212 @@
                 font-size: 1.4rem;
             }
         }
+
+        /* Estilos para el modal de expansión */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.7) translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-content {
+            background: rgba(25, 25, 50, 0.95);
+            backdrop-filter: blur(30px);
+            margin: 5% auto;
+            padding: 3rem;
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            border-radius: 25px;
+            box-shadow: 
+                0 20px 60px rgba(138, 43, 226, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            animation: slideIn 0.4s ease;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .close {
+            color: rgba(255, 255, 255, 0.7);
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(138, 43, 226, 0.2);
+        }
+
+        .close:hover {
+            color: #fff;
+            background: rgba(138, 43, 226, 0.5);
+            transform: scale(1.1);
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+            padding-right: 3rem;
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-meta-item {
+            background: rgba(138, 43, 226, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .modal-content-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: justify;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .historia-preview {
+            max-height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .historia-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(transparent, rgba(25, 25, 50, 0.8));
+        }
+
+        .click-hint {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: rgba(138, 43, 226, 0.8);
+            font-style: italic;
+        }
+
+        /* Personalizar scrollbar del modal */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(138, 43, 226, 0.6);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(138, 43, 226, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 2% auto;
+                padding: 2rem;
+                width: 95%;
+                max-width: 95vw;
+                max-height: 95vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .modal-title {
+                font-size: 1.8rem;
+                word-wrap: break-word;
+                word-break: break-word;
+            }
+
+            .modal-meta {
+                gap: 1rem;
+            }
+
+            .modal-content-text {
+                font-size: 1rem;
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
@@ -374,9 +581,21 @@
         </div>
     </div>
 
+    <!-- Modal para expandir historia -->
+    <div id="historiaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-meta" id="modalMeta"></div>
+            </div>
+            <div class="modal-content-text" id="modalContent"></div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            cargarHistorias();
+            // Event listeners para el modal ya están al final
         });
 
         function cargarHistorias() {
@@ -399,7 +618,7 @@
                         const data = JSON.parse(text.trim());
                         console.log('Data recibida:', data); // Debug
                         if (data.success) {
-                            mostrarHistorias(data.historias);
+                            displayHistorias(data.historias);
                             mostrarStats(data.total, data.source);
                         } else {
                             mostrarError(data.error || 'Error al cargar las historias');
@@ -413,7 +632,7 @@
                             try {
                                 const data = JSON.parse(match[0]);
                                 if (data.success) {
-                                    mostrarHistorias(data.historias);
+                                    displayHistorias(data.historias);
                                     mostrarStats(data.total, data.source);
                                 } else {
                                     mostrarError(data.error || 'Error al cargar las historias');
@@ -445,9 +664,21 @@
             `;
         }
 
-        function mostrarHistorias(historias) {
-            const contenido = document.getElementById('contenido');
+        function mostrarStats(total, source = 'Google Apps Script') {
+            const stats = document.getElementById('stats');
+            if (stats) {
+                stats.innerHTML = `� ${total} eco${total !== 1 ? 's' : ''} resonando desde ${source}`;
+            }
+        }
+
+        // Variable global para almacenar las historias
+        let historiasGlobales = [];
+
+        // Actualizar la función displayHistorias para guardar las historias globalmente
+        function displayHistorias(historias) {
+            historiasGlobales = historias; // Guardar para uso en el modal
             
+            const contenido = document.getElementById('contenido');
             if (!historias || historias.length === 0) {
                 contenido.innerHTML = `
                     <div class="no-historias">
@@ -471,18 +702,26 @@
                     case 'Inspiración': emoji = '💫'; break;
                 }
 
+                // Truncar contenido para preview
+                const contenidoPreview = historia.contenido && historia.contenido.length > 200 
+                    ? historia.contenido.substring(0, 200) + '...' 
+                    : historia.contenido || 'Contenido no disponible';
+
                 html += `
-                    <div class="historia-card">
+                    <div class="historia-card" onclick="abrirModal(${index})">
                         <div class="historia-header">
                             <div class="historia-titulo">
-                                ${emoji} Eco #${historias.length - index}
+                                ${emoji} Eco #${historias.length - index}: ${historia.titulo || 'Sin título'}
                             </div>
                             <div class="historia-meta">
                                 <span class="categoria">${historia.categoria || 'Sin categoría'}</span>
                                 <span class="fecha">🕰️ ${historia.fecha || 'Fecha desconocida'}</span>
                             </div>
                         </div>
-                        <div class="historia-contenido">${historia.contenido || 'Contenido no disponible'}</div>
+                        <div class="historia-preview">
+                            <div class="historia-contenido">${contenidoPreview}</div>
+                        </div>
+                        <div class="click-hint">🖱️ Click para leer la historia completa</div>
                     </div>
                 `;
             });
@@ -490,18 +729,61 @@
             contenido.innerHTML = html;
         }
 
-        function mostrarError(mensaje) {
-            const contenido = document.getElementById('contenido');
-            contenido.innerHTML = `
-                <div class="error">
-                    <h3>❌ Error en la resonancia</h3>
-                    <p>${mensaje}</p>
-                    <button onclick="cargarHistorias()" style="background: rgba(138, 43, 226, 0.8); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; margin-top: 1rem; cursor: pointer; font-family: inherit;">
-                        🔄 Intentar nuevamente
-                    </button>
-                </div>
+        // Funciones del modal
+        function abrirModal(index) {
+            const historia = historiasGlobales[index];
+            if (!historia) return;
+
+            // Emoji para la categoría
+            let emoji = '📖';
+            switch(historia.categoria) {
+                case 'Éxito': emoji = '✨'; break;
+                case 'Misterio': emoji = '🔮'; break;
+                case 'Aprendizaje': emoji = '📚'; break;
+                case 'Inspiración': emoji = '💫'; break;
+            }
+
+            // Llenar el modal con los datos
+            document.getElementById('modalTitle').textContent = 
+                `${emoji} Eco #${historiasGlobales.length - index}: ${historia.titulo || 'Sin título'}`;
+            
+            document.getElementById('modalMeta').innerHTML = `
+                <div class="modal-meta-item">📚 ${historia.categoria || 'Sin categoría'}</div>
+                <div class="modal-meta-item">🕰️ ${historia.fecha || 'Fecha desconocida'}</div>
             `;
+            
+            document.getElementById('modalContent').textContent = historia.contenido || 'Contenido no disponible';
+
+            // Mostrar el modal
+            document.getElementById('historiaModal').style.display = 'block';
         }
+
+        function cerrarModal() {
+            document.getElementById('historiaModal').style.display = 'none';
+        }
+
+        // Event listeners para el modal
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cerrar modal con la X
+            document.querySelector('.close').onclick = cerrarModal;
+            
+            // Cerrar modal al hacer click fuera del contenido
+            window.onclick = function(event) {
+                const modal = document.getElementById('historiaModal');
+                if (event.target === modal) {
+                    cerrarModal();
+                }
+            }
+            
+            // Cerrar modal con Escape
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    cerrarModal();
+                }
+            });
+
+            cargarHistorias();
+        });
     </script>
 </body>
 </html>
